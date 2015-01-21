@@ -30,7 +30,7 @@ abstract class Deploy {
 	protected static $repos = array();
 
 	/**
-	 * The name of the file that will be used for logging deployments. Set 
+	 * The name of the file that will be used for logging deployments. Set
 	 * to false to disable logging.
 	 */
 	private static $_log_name = 'deployments.log';
@@ -42,11 +42,11 @@ abstract class Deploy {
 
 	/**
 	 * The timestamp format used for logging.
-	 * 
+	 *
 	 * @link    http://www.php.net/manual/en/function.date.php
 	 */
 	private static $_date_format = 'Y-m-d H:i:sP';
-	
+
 	/**
 	 * Registers available repos for deployment
 	 *
@@ -59,7 +59,7 @@ abstract class Deploy {
 
 		if ( ! is_array( $repo ) )
 			return false;
-		
+
 		$required_keys = array( 'path', 'branch' );
 		foreach ( $required_keys as $key ) {
 			if ( ! array_key_exists( $key, $repo ) )
@@ -131,7 +131,7 @@ abstract class Deploy {
 	private $_remote;
 
 	/**
-	 * The path to where your website and git repository are located, can be 
+	 * The path to where your website and git repository are located, can be
 	 * a relative or absolute path
 	 */
 	private $_path;
@@ -148,7 +148,7 @@ abstract class Deploy {
 
 	/**
 	 * Sets up the repo information.
-	 * 
+	 *
 	 * @param 	array 	$repo 	The repository info. See class block for docs.
 	 */
 	protected function __construct( $name, $repo, $payload, $headers ) {
@@ -175,7 +175,7 @@ abstract class Deploy {
 
 	/**
 	 * Writes a message to the log file.
-	 * 
+	 *
 	 * @param 	string 	$message 	The message to write
 	 * @param 	string 	$type 		The type of log message (e.g. INFO, DEBUG, ERROR, etc.)
 	 */
@@ -206,17 +206,18 @@ abstract class Deploy {
 			// Make sure we're in the right directory
 			chdir( $this->_path );
 
-			// Discard any changes to tracked files since our last deploy
-			exec( 'git reset --hard HEAD', $output );
+			echo exec( 'git fetch ' . $this->_remote);
 
-			// Update the local repository
-			exec( 'git pull ' . $this->_remote . ' ' . $this->_branch, $output );
+			// Discard any changes to tracked files since our last deploy
+			echo exec( 'git reset --hard ' . $this->_remote . '/' . $this->_branch, $output );
 
 			// Secure the .git directory
 			echo exec( 'chmod -R og-rx .git' );
 
 			if ( is_callable( $this->_post_deploy ) )
 				call_user_func( $this->_post_deploy );
+
+			echo exec( 'git log -n1');
 
 			$this->log( '[SHA: ' . $this->_commit . '] Deployment of ' . $this->_name . ' from branch ' . $this->_branch . ' successful' );
 			echo( '[SHA: ' . $this->_commit . '] Deployment of ' . $this->_name . ' from branch ' . $this->_branch . ' successful' );

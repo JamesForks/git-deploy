@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL);
 // Make sure we have a payload, stop if we do not.
 $payload = file_get_contents( 'php://input' );
 if ( empty( $payload ) )
@@ -16,7 +17,7 @@ require_once 'deploy-config.php';
  */
 class GitHub_Deploy extends Deploy {
 	/**
-	 * Decodes and validates the data from github and calls the 
+	 * Decodes and validates the data from github and calls the
 	 * deploy constructor to deploy the new code.
 	 *
 	 * @param   string  $_payload   The JSON encoded payload data.
